@@ -123,7 +123,7 @@ namespace OnlineAssessment.Controllers
         }
         private void ComputeStatus(AssessmentResult res)
         {
-            if (res.Percentage<=35)
+            if (res.Percentage<=24)
             {
                 res.Status = Status.Poor;
             }

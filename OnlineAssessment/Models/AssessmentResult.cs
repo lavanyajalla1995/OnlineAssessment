@@ -14,6 +14,7 @@ namespace OnlineAssessment.Models
         public Status  Status{ get; set; }
         public int PassMarks { get; set; } = 1;
         public int Timer { get; set; }
+        public int Extra { get; set; }
     }
     public enum Status
     {
