@@ -1,0 +1,172 @@
+﻿@model OnlineAssessment.Models.AssessmentResult
+
+@{
+    ViewData["Title"] = "Exam";
+}
+
+    <div class="row">
+        <div class="col-md-4 ">
+            <form asp-action="Exam" method="post" id="submit">
+                @for (int i = 0; i < Model.Test.Count; i++)
+                {
+                    <div class="form-group mt-4">
+                        <input type="hidden" asp-for="@Model.Test[i].Question" value="@Model.Test[i].Question" />
+                        <label>@Model.Test[i].Question</label>
+                    </div>
+                    for (int op = 0; op < Model.Test[i].Options.Count; op++)
+                    {
+                        <input type="hidden" asp-for="@Model.Test[i].Options[op]" value="@Model.Test[i].Options[op]" />
+                        if (Model.ShowResult)
+                        {
+                            <div class="form-check form-check disabled">
+                                @Html.RadioButtonFor(o => o.Test[i].SelectedAnswer, Model.Test[i].Options[op], new { disabled = "disabled", @class = "" })
+                                <label class="form-check-label" for="example">
+                                    @Model.Test[i].Options[op]
+                                </label>
+                            </div>
+                        }
+
+                        else
+                        {
+                            <div class="form-check form-check">
+                                @Html.RadioButtonFor(o => o.Test[i].SelectedAnswer, Model.Test[i].Options[op])
+                                <label class="form-check-label" for="example">
+                                    @Model.Test[i].Options[op]
+                                </label>
+                            </div>
+                        }
+
+                    }
+                    if (string.IsNullOrEmpty(Model.Test[i].Answer) == false)
+                    {
+                        <div class="alert alert-success mt-4" role="alert">
+                            <input type="hidden" asp-for="@Model.Test[i].Answer" value="@Model.Test[i].Answer" />
+                            <span>@Model.Test[i].Answer</span>
+                        </div>
+                    }
+
+
+                }
+                @if (Model.ShowResult)
+                {
+            <div class="mr-5">
+                <h3 class="text-primary ">
+                    You Scored
+                    <small>@Model.Percentage%</small>
+                </h3>
+            </div>
+                    <h3 class="text-success">
+                        Total Marks
+                        <small>@Model.TotalMarks</small>
+
+                    </h3>
+                    <h3>
+                        Total Correct
+                        <small>@Model.TotalMarksSecured</small>
+                    </h3>
+                    <h3>
+                        Status
+                        <small>@Model.Status</small>
+                    </h3>
+                    if (Model.Status == OnlineAssessment.Models.Status.Poor)
+                    {
+                        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_ITOCol.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay>
+                        </lottie-player>
+                    }
+                    else
+                    {
+                        <lottie-player src="https://assets7.lottiefiles.com/datafiles/1QPWH9xjWBflXo1QBqsL0XszJILLRF2dMiZ7PBt3/Trophy-animation/trophy.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop controls autoplay>
+                        </lottie-player>
+                    }
+
+
+                }
+                @if (Model.ShowResult)
+                {
+                    <h5>Result:@Model.TotalMarksSecured/@Model.TotalMarks</h5>
+                }
+                else if (Model.PageNo == 1)
+                {
+                    <input type="submit" id="btnnext" value="Next" class="btn btn-primary" />
+
+                }
+
+
+                else if (Model.PageNo != Model.TotalPages)
+                {
+                    <input type="submit" id="btnpre" value="Previous" class="btn btn-primary" />
+                    <input type="submit" id="btnnext1" value="Next" class="btn btn-primary" />
+                }
+                else if (Model.PageNo == Model.TotalPages)
+                {
+                    <input type="submit" value="Previous" id="btnpre" class="btn btn-primary" />
+                    <input type="submit" id="btnnext1" value="Sumbit" class="btn btn-primary" />
+                }
+
+
+                @Html.HiddenFor(m => m.PageNo)
+                @Html.HiddenFor(m => m.TotalPages)
+                @Html.HiddenFor(m => m.Timer)
+
+
+            </form>
+        </div>
+        @if (!Model.ShowResult)
+        {
+            <div class="col-md-8">
+                <div class="row float-right">
+                    <div class="col-4">
+                        <lottie-player src="https://assets5.lottiefiles.com/datafiles/iBUxigsGzc4HtDk/data.json" background="transparent" speed="1" style="width: 100px; height: 70px;" loop autoplay>
+                        </lottie-player>
+                    </div>
+                    <span class="col-8 mt-4" id="timerDisplay"></span>
+
+                </div>
+            </div>
+            
+        }
+
+    </div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://unpkg.com/@@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <script>
+        $(() => {
+
+            $("#btnnext").click(function () {
+                document.getElementById("PageNo").value = parseInt($("#PageNo").val()) + 1;
+            });
+            $("#btnpre").click(function () {
+                document.getElementById("PageNo").value = parseInt($("#PageNo").val()) - 1;
+            })
+            $("#btnnext1").click(function () {
+                document.getElementById("PageNo").value = parseInt($("#PageNo").val()) + 1;
+            })
+
+
+        })
+        setInterval(() => {
+            var time = parseInt($("#Timer").val()) - 1;
+            $("#Timer").val(time);
+            var date = new Date(null);
+            date.setSeconds(time);
+            var result = date.toISOString().substr(11, 8);
+            $("#timerDisplay").html(result);
+            if (time === 0)
+            {
+                var totalpage = parseInt($("#TotalPages").val()) + 1;
+                $("#PageNo").val(totalpage);
+                $("#submit").submit();
+            }
+
+        },1000)
+
+    </script>
+
+
+
+
+}
