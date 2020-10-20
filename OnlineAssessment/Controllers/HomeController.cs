@@ -135,7 +135,7 @@ namespace OnlineAssessment.Controllers
             {
                 res.Status = Status.Good;
             }
-            else if (res.Percentage<=75)
+            else if (res.Percentage<=80)
             {
                 res.Status = Status.Excellent;
             }
